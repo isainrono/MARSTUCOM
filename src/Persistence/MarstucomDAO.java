@@ -6,6 +6,9 @@
 package Persistence;
 
 import Exceptions.UserExceptions;
+import Model.Enemie;
+import Model.Gem;
+import Model.Place;
 import Model.SuperHero;
 import Model.User;
 import java.sql.Connection;
@@ -26,44 +29,173 @@ public class MarstucomDAO {
 
     private Connection connection;
     
-    // Metodo que lista todos los superHeroes
-    public ArrayList<SuperHero> selectHeroList() throws SQLException {
-        ArrayList heroList = new ArrayList<>();
+    // ------------------------------------------------------------   Metodos de gemas
+    public ArrayList<Gem> selectGemList() throws SQLException {
+        ArrayList<Gem> gemsList = new ArrayList<>();
         
         Statement st = connection.createStatement();
-        String query = "select * from superhero;";
+        String query = "select * from gem;";
         ResultSet rs = st.executeQuery(query);
 
-        while(rs.next()) {
-            heroList.add(new SuperHero(rs.getString("name"), rs.getString("superpower")));
+        while (rs.next()) {
+            gemsList.add(new Gem(rs.getString("name"), rs.getString("user"), rs.getString("owner"), rs.getString("place")));
+        }
+
+        st.close();
+        rs.close();
+        
+        return gemsList;
+    }
+    // ------------------------------------------------------------   Metodos de enemigos
+    public ArrayList<Enemie> selectEnemyList() throws SQLException {
+        ArrayList<Enemie> enemiesList = new ArrayList<>();
+        
+        Statement st = connection.createStatement();
+        String query = "select * from enemy;";
+        ResultSet rs = st.executeQuery(query);
+
+        while (rs.next()) {
+            enemiesList.add(new Enemie(rs.getString("name"), rs.getString("debility"), Integer.parseInt(rs.getString("level")), rs.getString("place")));
+        }
+
+        st.close();
+        rs.close();
+        
+        return enemiesList;
+    }
+    
+    // ------------------------------------------------------------   Metodos de lugares
+    // Metodo que muestra informacion de un lugar en especifico
+    public Place placeInfo(String name) throws SQLException {
+        Place place = new Place();
+        
+        Statement st = connection.createStatement();
+        String query = "select * from place where name='"+ name +"';";
+        ResultSet rs = st.executeQuery(query);
+        
+        if(rs.next()) {
+            place = new Place(rs.getString("name"), rs.getString("description"), rs.getString("north"), rs.getString("south"), rs.getString("east"), rs.getString("west"));
         }
         
         st.close();
         rs.close();
-        disconnect();
-        return heroList;
+        return place;
     }
     
+    // Metodo que muestra todo los lugares del juego
+    public ArrayList<Place> selectPlaceList() throws SQLException {
+        ArrayList placesList = new ArrayList();
+        
+        Statement st = connection.createStatement();
+        String query = "select * from place;";
+        ResultSet rs = st.executeQuery(query);
+        
+        while(rs.next()) {
+            placesList.add(new Place(rs.getString("name"), rs.getString("description"), rs.getString("north"), rs.getString("south"), rs.getString("east"), rs.getString("west")));
+        }
+        
+        st.close();
+        rs.close();     
+        return placesList;
+    }
+    
+    // ------------------------------------------------------------   Metodos de Usuario
+    
+    // Metodo que elimina usuario
+    public void deleteUser(String name) throws SQLException {
+        Statement st = connection.createStatement();
+        PreparedStatement pst = connection.prepareStatement("delete from user where username = ?;");
+        pst.setString(1, name);
+        pst.execute();
+        pst.close();
+        
+    }
+    
+    // Metodo que regresa todos los datos del usuario
+    public User userInfo(String name) throws SQLException {
+        User user = new User();
+        Statement st = connection.createStatement();
+        String query = "select * from user where username = '"+ name +"';";
+        ResultSet rs = st.executeQuery(query);
+        if(rs.next()) {
+            user = new User(rs.getString("username"), rs.getString("pass"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")), Integer.parseInt(rs.getString("points")));
+        }
+        
+        st.close();
+        rs.close();
+        return user;
+    }
+    
+    // Metodo que regresa el pass del usuario
+    public String userPass(String name) throws SQLException {
+        String pass = "";
+        Statement st = connection.createStatement();
+        String query = "select pass from user  where username = '"+name+"';";
+        ResultSet rs = st.executeQuery(query);
+        
+        if(rs.next()){
+            pass = rs.getString("pass");
+        }
+        
+        st.close();
+        rs.close();
+        return  pass;
+    }
+
+    // Metodo que lista todos los usuarios
+    public ArrayList<User> selectUser() throws SQLException {
+        ArrayList userList = new ArrayList<>();
+
+        Statement st = connection.createStatement();
+        String query = "select * from user;";
+        ResultSet rs = st.executeQuery(query);
+
+        while (rs.next()) {
+            userList.add(new User(rs.getString("username")));
+        }
+
+        st.close();
+        rs.close();
+        return userList;
+    }
+
+    // Metodo que lista todos los superHeroes
+    public ArrayList<SuperHero> selectHeroList() throws SQLException {
+        ArrayList heroList = new ArrayList<>();
+
+        Statement st = connection.createStatement();
+        String query = "select * from superhero;";
+        ResultSet rs = st.executeQuery(query);
+
+        while (rs.next()) {
+            heroList.add(new SuperHero(rs.getString("name"), rs.getString("superpower")));
+        }
+
+        st.close();
+        rs.close();
+        return heroList;
+    }
+
     public void insertUser(User user) throws SQLException, UserExceptions {
         if (existUser(user)) {
             throw new Exceptions.UserExceptions("NOT 001");
+        } else {
+            PreparedStatement ps = connection.prepareStatement("insert into user values (?, ?, ?, ?, ?, ?);");
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getPass());
+            ps.setInt(3, user.getLevel());
+            ps.setString(4, user.getHero());
+            ps.setString(5, user.getPlace());
+            ps.setInt(6, user.getPoints());
+            ps.executeUpdate();
+            ps.close();
         }
-        
-        PreparedStatement ps = connection.prepareStatement("insert into user values (?, ?, ?, ?, ?, ?);");
-        ps.setString(1, user.getName());
-        ps.setString(2, user.getPass());
-        ps.setInt(3, user.getLevel());
-        ps.setString(4, user.getHero());
-        ps.setString(5, user.getPlace());
-        ps.setInt(6, user.getPoints());
-        ps.executeUpdate();
-        ps.close();
-        
+
     }
 
     private boolean existUser(User user) throws SQLException {
         Statement st = connection.createStatement();
-        String query = "select * from user where nombre='" + user.getName() + "';";
+        String query = "select * from user where username='" + user.getName() + "';";
         ResultSet rs = st.executeQuery(query);
         boolean exist = rs.next();
         rs.close();

@@ -9,20 +9,19 @@ package Model;
  *
  * @author isain
  */
-public class Gem {
-    
+public class Enemie {
     private String name;
-    private String user;
-    private String owner;
+    private String debility;
+    private int level;
     private String place;
     
-    public Gem() {
+    public Enemie() {
     }
     
-    public Gem (String name, String user, String owner, String place) {
+    public Enemie(String name, String debility, int level, String place) {
         this.name = name;
-        this.user = user;
-        this.owner = owner;
+        this.debility = debility;
+        this.level = level;
         this.place = place;
     }
 
@@ -34,20 +33,20 @@ public class Gem {
         this.name = name;
     }
 
-    public String getUser() {
-        return user;
+    public String getDebility() {
+        return debility;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setDebility(String debility) {
+        this.debility = debility;
     }
 
-    public String getOwner() {
-        return owner;
+    public int getLevel() {
+        return level;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public String getPlace() {
@@ -57,13 +56,12 @@ public class Gem {
     public void setPlace(String place) {
         this.place = place;
     }
-
+    
+    
     @Override
     public String toString() {
-        return "name: " + this.name + " owner: " + this.owner + " place: " + this.place + " user: " + this.user ; //To change body of generated methods, choose Tools | Templates.
+        return "Name: " + this.name + " - " + "Debility: " + this.debility + " - " + "Level: " + this.level; 
     }
-    
-    
     
     
 }

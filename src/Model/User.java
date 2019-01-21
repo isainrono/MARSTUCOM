@@ -20,6 +20,18 @@ public class User {
     public User() {
     }
     
+    public User(String name, String pass, String hero, int level, int points) {
+        this.name = name;
+        this.pass = pass;
+        this.hero = hero;
+        this.level = level;
+        this.points = points;
+    }
+    
+    public User(String name) {
+        this.name = name;
+    }
+    
     public User(String name, String pass, String hero) {
         this.name = name;
         this.pass = pass;
