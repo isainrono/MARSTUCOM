@@ -16,8 +16,17 @@ public class User {
     private int level = 1;
     private int points = 0;
     private String place = "New York";
+    private int gems;
     
     public User() {
+    }
+    
+    public User(String name, String hero, int level, int points, int gems) {
+        this.name = name;
+        this.hero = hero;
+        this.level = level;
+        this.points = points;
+        this.gems = gems;
     }
     
     public User(String name, String pass, String hero, int level, int points) {
@@ -84,6 +93,14 @@ public class User {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public int getGems() {
+        return gems;
+    }
+
+    public void setGems(int gems) {
+        this.gems = gems;
     }
     
     

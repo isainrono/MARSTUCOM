@@ -28,11 +28,45 @@ import org.omg.CORBA.UserException;
 public class MarstucomDAO {
 
     private Connection connection;
-    
+
+    // ------------------------------------------------------------   Metodos de juegos
+    // Metodo sql que regresa el ranking ordenado
+    public ArrayList<User> selectRanking() throws SQLException {
+        ArrayList<User> rankingList = new ArrayList<>();
+
+        Statement st = connection.createStatement();
+        String query = "select user.username, user.superhero, count(*) as gemas,user.level, user.points \n"
+                + "from user inner join gem on user.username = gem.user where gem.user = gem.owner group by user.username order by gemas desc, level desc,points desc;";
+        ResultSet rs = st.executeQuery(query);
+
+        while (rs.next()) {
+            //rankingList.add(new User(rs.getString("username"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")),Integer.parseInt(rs.getString("points")), Integer.parseInt(rs.getString("gemas"))));
+            rankingList.add(new User(rs.getString("username"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")), Integer.parseInt(rs.getString("points")), Integer.parseInt(rs.getString("gemas"))));
+        }
+
+        st.close();
+        rs.close();
+
+        return rankingList;
+    }
+
     // ------------------------------------------------------------   Metodos de gemas
+    // Metodo que cambia el propietario de una gema
+    public void changeGemOwner(String gemOwnwer, String gemName) throws SQLException {
+
+        PreparedStatement ps = connection.prepareStatement("update gem set owner = ? where name = ? and owner is null;");
+        
+        ps.setString(1, gemOwnwer);
+        ps.setString(2, gemName);
+        ps.executeUpdate();
+        ps.close();
+
+    }
+
+    // Metodo que muestra totas las gemas del juego
     public ArrayList<Gem> selectGemList() throws SQLException {
         ArrayList<Gem> gemsList = new ArrayList<>();
-        
+
         Statement st = connection.createStatement();
         String query = "select * from gem;";
         ResultSet rs = st.executeQuery(query);
@@ -43,13 +77,14 @@ public class MarstucomDAO {
 
         st.close();
         rs.close();
-        
+
         return gemsList;
     }
+
     // ------------------------------------------------------------   Metodos de enemigos
     public ArrayList<Enemie> selectEnemyList() throws SQLException {
         ArrayList<Enemie> enemiesList = new ArrayList<>();
-        
+
         Statement st = connection.createStatement();
         String query = "select * from enemy;";
         ResultSet rs = st.executeQuery(query);
@@ -60,47 +95,46 @@ public class MarstucomDAO {
 
         st.close();
         rs.close();
-        
+
         return enemiesList;
     }
-    
+
     // ------------------------------------------------------------   Metodos de lugares
     // Metodo que muestra informacion de un lugar en especifico
     public Place placeInfo(String name) throws SQLException {
         Place place = new Place();
-        
+
         Statement st = connection.createStatement();
-        String query = "select * from place where name='"+ name +"';";
+        String query = "select * from place where name='" + name + "';";
         ResultSet rs = st.executeQuery(query);
-        
-        if(rs.next()) {
+
+        if (rs.next()) {
             place = new Place(rs.getString("name"), rs.getString("description"), rs.getString("north"), rs.getString("south"), rs.getString("east"), rs.getString("west"));
         }
-        
+
         st.close();
         rs.close();
         return place;
     }
-    
+
     // Metodo que muestra todo los lugares del juego
     public ArrayList<Place> selectPlaceList() throws SQLException {
         ArrayList placesList = new ArrayList();
-        
+
         Statement st = connection.createStatement();
         String query = "select * from place;";
         ResultSet rs = st.executeQuery(query);
-        
-        while(rs.next()) {
+
+        while (rs.next()) {
             placesList.add(new Place(rs.getString("name"), rs.getString("description"), rs.getString("north"), rs.getString("south"), rs.getString("east"), rs.getString("west")));
         }
-        
+
         st.close();
-        rs.close();     
+        rs.close();
         return placesList;
     }
-    
+
     // ------------------------------------------------------------   Metodos de Usuario
-    
     // Metodo que elimina usuario
     public void deleteUser(String name) throws SQLException {
         Statement st = connection.createStatement();
@@ -108,38 +142,38 @@ public class MarstucomDAO {
         pst.setString(1, name);
         pst.execute();
         pst.close();
-        
+
     }
-    
+
     // Metodo que regresa todos los datos del usuario
     public User userInfo(String name) throws SQLException {
         User user = new User();
         Statement st = connection.createStatement();
-        String query = "select * from user where username = '"+ name +"';";
+        String query = "select * from user where username = '" + name + "';";
         ResultSet rs = st.executeQuery(query);
-        if(rs.next()) {
+        if (rs.next()) {
             user = new User(rs.getString("username"), rs.getString("pass"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")), Integer.parseInt(rs.getString("points")));
         }
-        
+
         st.close();
         rs.close();
         return user;
     }
-    
+
     // Metodo que regresa el pass del usuario
     public String userPass(String name) throws SQLException {
         String pass = "";
         Statement st = connection.createStatement();
-        String query = "select pass from user  where username = '"+name+"';";
+        String query = "select pass from user  where username = '" + name + "';";
         ResultSet rs = st.executeQuery(query);
-        
-        if(rs.next()){
+
+        if (rs.next()) {
             pass = rs.getString("pass");
         }
-        
+
         st.close();
         rs.close();
-        return  pass;
+        return pass;
     }
 
     // Metodo que lista todos los usuarios

@@ -43,6 +43,10 @@ public class Marstucom {
                     case 1:
                         if(datas[0].equalsIgnoreCase("V")){
                             GameOptions.showSuperHeros(datas[0]);
+                        } else if(datas[0].equalsIgnoreCase("K")){
+                            GameOptions.showRanking();
+                        } else if(datas[0].equalsIgnoreCase("G")){
+                            GameOptions.getGem(datas);
                         } else {
                             GameOptions.moveUser(datas[0]);
                         } 
@@ -51,22 +55,26 @@ public class Marstucom {
                         if(datas[0].equalsIgnoreCase("D")){
                             GameOptions.deleteUser(datas[1]);
                         } else {
-                            System.out.println("invalit option");
+                            System.out.println("[ Wrong command ]");
                         }
                         break;
                     case 3:
-                        GameOptions.UserLogin(datas[0],datas[1], datas[2]);
+                        if(datas[0].equalsIgnoreCase("L")){
+                            GameOptions.UserLogin(datas[0],datas[1], datas[2]);
+                        } else if(datas[0].equalsIgnoreCase("G")) {
+                            GameOptions.getGem(datas);
+                        }
                         break;
                     case 4:
                         // Desde aquí accedo a un metodo que registra usuarios en la base de datos
-                        //GameOptions.userRegister();
                         GameOptions.userRegister(datas[0],datas[1], datas[2], datas[3]);
                         break;
                     case 5:
+                        System.out.println("[ EXIT GAME ]");
                         exit = true;
                         break;
                     default:
-                        System.out.println("invalit option!!");
+                        System.out.println("[ Wrong number of arguments ]");
                         break;
                 }
 

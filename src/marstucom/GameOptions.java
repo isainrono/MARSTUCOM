@@ -32,15 +32,38 @@ public class GameOptions {
         MarsDAO.disconnect();
     }
 
+    public static void getGem(String[] datas) throws SQLException {
+        if (loggedUser.getName() != "") {
+            if (datas.length != 3) {
+                System.out.println("[ Wrong command ]");
+            } else {
+                takeGem(datas[1], datas[2]);
+
+            }
+        } else {
+            System.out.println("[ You are not logged in ]");
+            System.out.println("You need do loggin for use this option!!");
+        }
+
+    }
+
+    // Metodo que lista el ranking de usuarios del juego
+    public static void showRanking() throws SQLException {
+        System.out.println(" - Ranking -");
+        for (User user : MarsDAO.selectRanking()) {
+            System.out.println(user.getName() + "    " + user.getHero() + "   " + user.getGems() + "   " + user.getLevel() + "   " + user.getPoints());
+        }
+    }
+
     // Metodo que permite eliminar un usuario de la base de datos
     public static void deleteUser(String pass) throws SQLException {
         if (loggedUser.getName() != "") {
-            if(loggedUser.getPass().equals(pass)){
+            if (loggedUser.getPass().equals(pass)) {
                 MarsDAO.deleteUser(loggedUser.getName());
                 System.out.println("User deleted correctly");
             } else {
                 System.out.println("Incorrect pass");
-            }  
+            }
         } else {
             System.out.println("[ You are not logged in ]");
         }
@@ -52,7 +75,7 @@ public class GameOptions {
         if (loggedUser.getName() != "") {
             validateRutOption(option);
         } else {
-            System.out.println("You need do loggin for user this option!!");
+            System.out.println("You need do loggin for use this option!!");
         }
 
     }
@@ -197,6 +220,7 @@ public class GameOptions {
         confirmRut(place.getSouth(), "S");
         confirmRut(place.getEast(), "E");
         confirmRut(place.getWest(), "W");
+        System.out.println("");
     }
 
     // Metodo que lista todo los lugares del juego
@@ -235,6 +259,22 @@ public class GameOptions {
         }
     }
 
+    // Metodo que te muestra que gema esta libre en el lugar donde estas
+    public static Gem freeGem() throws SQLException {
+        Gem freeGem = new Gem();
+        for (Gem gem : MarsDAO.selectGemList()) {
+            if (gem.getPlace().equalsIgnoreCase(loggedUser.getPlace())) {
+                if(gem.getOwner() == null){
+                    freeGem = gem;
+                } else {
+                    freeGem.setName("");
+                }
+            }
+        }
+        
+        return freeGem;
+    }
+
     // METODOS DE ENEMIGOS -------------------------------------------------------> M ENEMIGOS
     // Metodo que lista todos los enemigos en la posicion del usuario
     public static void showEnemiesInPlace(String placeName) throws SQLException {
@@ -259,6 +299,20 @@ public class GameOptions {
     }
 
     // FILTROS DEL JUEGO  -------------------------------------------------------> JUEGO
+    // Metodo para obtener gema libre
+    public static void takeGem(String name, String gemName) throws SQLException {
+        Gem gem = freeGem();
+        if(gem.getName().equalsIgnoreCase(name +" "+gemName)){
+            System.out.println("You have got the gem !!");
+            MarsDAO.changeGemOwner(loggedUser.getName(), name +" "+gemName);
+        } else if(gem.getName().equalsIgnoreCase("")){
+            System.out.println("[ isn´t Gems avaible here ]");
+        } else {
+            System.out.println("[ Here there is no gem with that name ]");
+        }
+
+    }
+
     public static void confirmRut(String rutPlace, String rut) {
         if (rutPlace != null) {
             System.out.print(rut + ": " + rutPlace + " ");
@@ -273,27 +327,36 @@ public class GameOptions {
                 if (vRutplace.getNorth() != null) {
                     move(rut, vRutplace.getNorth());
                     return true;
+                } else {
+                    System.out.println("[ You can't move in that direction ]");
                 }
                 break;
             case "S":
                 if (vRutplace.getSouth() != null) {
                     move(rut, vRutplace.getSouth());
                     return true;
+                } else {
+                    System.out.println("[ You can't move in that direction ]");
                 }
                 break;
             case "E":
                 if (vRutplace.getEast() != null) {
                     move(rut, vRutplace.getEast());
                     return true;
+                } else {
+                    System.out.println("[ You can't move in that direction ]");
                 }
                 break;
             case "W":
                 if (vRutplace.getWest() != null) {
                     move(rut, vRutplace.getWest());
                     return true;
+                } else {
+                    System.out.println("[ You can't move in that direction ]");
                 }
                 break;
             default:
+                System.out.println("[ " + rut + " Is not a correct direction!! ]");
                 break;
         }
 

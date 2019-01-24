@@ -6,7 +6,10 @@
             <file>file:/Users/isain/DAM/MARSTUCOM/src/Model/Enemie.java</file>
             <file>file:/Users/isain/DAM/MARSTUCOM/src/marstucom/GameOptions.java</file>
             <file>file:/Users/isain/DAM/MARSTUCOM/src/marstucom/Marstucom.java</file>
+            <file>file:/Users/isain/DAM/MARSTUCOM/src/Model/Ranking.java</file>
+            <file>file:/Users/isain/DAM/MARSTUCOM/src/Model/Notifications.java</file>
             <file>file:/Users/isain/DAM/MARSTUCOM/src/Persistence/MarstucomDAO.java</file>
+            <file>file:/Users/isain/DAM/MARSTUCOM/src/Exceptions/UserExceptions.java</file>
         </group>
     </open-files>
 </project-private>
