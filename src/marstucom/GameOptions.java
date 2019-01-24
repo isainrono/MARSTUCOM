@@ -31,7 +31,8 @@ public class GameOptions {
     public static void exit() throws SQLException {
         MarsDAO.disconnect();
     }
-
+    
+    // Desde el siguiente metodo filtro los errores al intetar un usuario obtener una nueva gema
     public static void getGem(String[] datas) throws SQLException {
         if (loggedUser.getName() != "") {
             if (datas.length != 3) {
@@ -299,7 +300,7 @@ public class GameOptions {
     }
 
     // FILTROS DEL JUEGO  -------------------------------------------------------> JUEGO
-    // Metodo para obtener gema libre
+    // Metodo que mira las gemas libres en la posicion en la que se encuentra  el usuario, en caso de estar libre, el uuario logeado sera el propietario
     public static void takeGem(String name, String gemName) throws SQLException {
         Gem gem = freeGem();
         if(gem.getName().equalsIgnoreCase(name +" "+gemName)){
@@ -312,13 +313,15 @@ public class GameOptions {
         }
 
     }
-
+    
+    // Metodo que muetra las rutas por pantalla
     public static void confirmRut(String rutPlace, String rut) {
         if (rutPlace != null) {
             System.out.print(rut + ": " + rutPlace + " ");
         }
     }
-
+    
+    // Metodo que filtra las rutas segun la posicion del usuario, y filtra en que direcciones es posible ir.
     public static boolean validateRutOption(String rut) throws SQLException {
         Place vRutplace = MarsDAO.placeInfo(loggedUser.getPlace());
 
@@ -362,7 +365,8 @@ public class GameOptions {
 
         return false;
     }
-
+    
+    // Metodo que le permiete al usuario logeado moverse y obtener información del lugar actual en el que se encuentra.
     public static void move(String option, String placeName) throws SQLException {
 
         System.out.println("Moving to " + option + "...");

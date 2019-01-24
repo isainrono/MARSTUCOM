@@ -33,14 +33,16 @@ public class MarstucomDAO {
     // Metodo sql que regresa el ranking ordenado
     public ArrayList<User> selectRanking() throws SQLException {
         ArrayList<User> rankingList = new ArrayList<>();
-
+        
+        // Mediante la siguiente consulta inner join en sql, puedo mostrar una lista de todo los usuarios de juego ordenandolos segun el filtro pedido en clase
+        
         Statement st = connection.createStatement();
         String query = "select user.username, user.superhero, count(*) as gemas,user.level, user.points \n"
                 + "from user inner join gem on user.username = gem.user where gem.user = gem.owner group by user.username order by gemas desc, level desc,points desc;";
         ResultSet rs = st.executeQuery(query);
 
         while (rs.next()) {
-            //rankingList.add(new User(rs.getString("username"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")),Integer.parseInt(rs.getString("points")), Integer.parseInt(rs.getString("gemas"))));
+            
             rankingList.add(new User(rs.getString("username"), rs.getString("superhero"), Integer.parseInt(rs.getString("level")), Integer.parseInt(rs.getString("points")), Integer.parseInt(rs.getString("gemas"))));
         }
 
@@ -53,7 +55,7 @@ public class MarstucomDAO {
     // ------------------------------------------------------------   Metodos de gemas
     // Metodo que cambia el propietario de una gema
     public void changeGemOwner(String gemOwnwer, String gemName) throws SQLException {
-
+        // Desde el siguiente prepareStatement hago propietario a un usuario de una gema en caso de que esta este libre.
         PreparedStatement ps = connection.prepareStatement("update gem set owner = ? where name = ? and owner is null;");
         
         ps.setString(1, gemOwnwer);
@@ -66,7 +68,7 @@ public class MarstucomDAO {
     // Metodo que muestra totas las gemas del juego
     public ArrayList<Gem> selectGemList() throws SQLException {
         ArrayList<Gem> gemsList = new ArrayList<>();
-
+        // Desde el siguiente select listo todas las gemas que estan en el juego
         Statement st = connection.createStatement();
         String query = "select * from gem;";
         ResultSet rs = st.executeQuery(query);
@@ -82,6 +84,7 @@ public class MarstucomDAO {
     }
 
     // ------------------------------------------------------------   Metodos de enemigos
+    // Metodo que obtiene en un arrayList la lista de enemigos del juego.
     public ArrayList<Enemie> selectEnemyList() throws SQLException {
         ArrayList<Enemie> enemiesList = new ArrayList<>();
 
@@ -209,7 +212,8 @@ public class MarstucomDAO {
         rs.close();
         return heroList;
     }
-
+    
+    // metodo que realiza un inser de un usuario en la base de datos del juego
     public void insertUser(User user) throws SQLException, UserExceptions {
         if (existUser(user)) {
             throw new Exceptions.UserExceptions("NOT 001");
@@ -226,7 +230,8 @@ public class MarstucomDAO {
         }
 
     }
-
+    
+    // Meotodo que permite verificar si un usuario eciste o no
     private boolean existUser(User user) throws SQLException {
         Statement st = connection.createStatement();
         String query = "select * from user where username='" + user.getName() + "';";
@@ -237,14 +242,16 @@ public class MarstucomDAO {
 
         return exist;
     }
-
+    
+    // Metodo que realiza la coneccion a la base de datos
     public void connect() throws SQLException {
         String url = "jdbc:mysql://localhost:3306/marvel";
         String user = "root";
         String password = "";
         connection = DriverManager.getConnection(url, user, password);
     }
-
+    
+    // MEtodo que desconecta la base de datos
     public void disconnect() throws SQLException {
         if (connection != null) {
             connection.close();
